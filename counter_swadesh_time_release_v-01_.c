@@ -1,5 +1,5 @@
 /*
- * charcount.c
+ * counter_swadesh_time_release_v-01_.c
  *
  * Copyright 2019 Axel Wintermann aka Bortechino <bortechino@gmail.com>
  *
