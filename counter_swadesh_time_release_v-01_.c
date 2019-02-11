@@ -24,14 +24,17 @@
 #include <string.h>
 #include <math.h>
 
-#define filenameF "lat-yakh"
-#define filenameS "eng-yakh"
-
+#define filenameF "lat-yakh" //область задания 
+#define filenameS "eng-yakh" //файлов языков
 
 int main()
 {
+ /*******************************************************************
+ * **********Инициализация переменных********************************
+ * ******************************************************************/
     FILE  *fpF, *fpS;
     int i, inumF, inumS, cnt_wordsF, cnt_wordsS, iF, cF, iS, cS;
+    i=inumF=inumS=cnt_wordsF=cnt_wordsS=iF=cF=iS=cS=0;
     cnt_wordsF = cnt_wordsS = 0;
     float countdF[27] = {0};
     float countdS[27] = {0};
@@ -42,22 +45,28 @@ int main()
     sumF = sumS = sumFS = sumSS = sumFF = num = deno = correlation=0.0;
     int countF[27] = {0};
     char chF, chS;
+    chF= 0;
+    chS= 0;
+    const float N0=100.0;
     int countS[27] = {0};
     double  meanF, meanS, sumS1, sumF1, varianceF, varianceS,SDS, SDF;
-    meanF = sumF1 = varianceF = SDF = 0.0;
+    meanF = sumF1 = varianceF = SDF = varianceS=SDS=sumS1=0.0;
     double  swodesh_time;
     const double Lcoeff=0.05;
     swodesh_time=0.0;
-  //  char alpha[27] = "abcdefghijklmnopqrstuvwxyz";
-    char alpha[27] = "bcdfghjklmnpqrstvwxz";
+ /******************************************************************
+ * **********Область задания списка фонем***************************
+ * *****************************************************************/
+    const char Alpha[27] = "abcdefghijklmnopqrstuvwxyz"; 
+    //const char Alpha[27] = "bcdfghjklmnpqrstvwxz";
     int strlen_alpha;
-    strlen_alpha= strlen(alpha);
-    printf ("число букв в строке %s равно %d\n",alpha, strlen_alpha);
+    strlen_alpha=0.0;
+    strlen_alpha= strlen(Alpha);
+    printf ("число букв в строке %s равно %d\n",Alpha, strlen_alpha);
 /*********************************************************************
 ************Раздел обработки первого файла****************************
 *********************************************************************/
     printf("File First\n");
-    
     fpF = fopen(filenameF,"r");
      if(fpF == NULL){
         printf("файл filenameF не найден: exit\n");
@@ -76,20 +85,20 @@ int main()
           while(fscanf(fpF, "%*[^\n]%*c") != EOF)
                      cnt_wordsF++;
         fseek (fpF, 0L,  SEEK_SET);
-       
+
     while( (chF = fgetc(fpF)) != EOF)
      {
         cF = 0;
-        while(alpha[cF] != '\0') 
+        while(Alpha[cF] != '\0')
         {
-            if(alpha[cF] == chF)
+            if(Alpha[cF] == chF)
             {
                 countF[cF]++;
                 }
             cF++;
         }
     }
-    for(iF = 0; iF<strlen_alpha;iF++) 
+    for(iF = 0; iF<strlen_alpha;iF++)
     {
 		countdF[iF]=countF[iF]/(float)inumF;
   //      printf("буква %c найдена %d раз в списке из %d букв %d словах\n",alpha[iF], countF[iF], inumF,cnt_wordsF);
@@ -108,15 +117,15 @@ int main()
 		}
 		varianceF = sumF1 / (float)cnt_wordsF;
 		SDF = sqrt(varianceF);
-		printf("Дисперсия по всем элементам = %.9f\n", varianceF);
+		printf("Дисперсия по всем элементам файла = %.9f\n", varianceF);
 		printf("Стандартное отклонение = %.9f\n", SDF);
 /********************************************************************
 *********Раздел обработки второго файла******************************
 ********************************************************************/
      printf("File Second\n");
-       
+
     fpS = fopen(filenameS,"r");
-    
+
     if(fpS == NULL)
     {
                 printf("Файл filenameS не найден: exit\n");
@@ -138,17 +147,17 @@ int main()
         while( (chS = fgetc(fpS)) != EOF)
         {
 			cS = 0;
-			while(alpha[cS] != '\0') 
+			while(Alpha[cS] != '\0')
 			{
 
-            if(alpha[cS] == chS) 
+            if(Alpha[cS] == chS)
             {
                 countS[cS]++;
             }
             cS++;
         }
     }
-    for(iS = 0; iS<strlen_alpha;iS++) 
+    for(iS = 0; iS<strlen_alpha;iS++)
     {
 		countdS[iS]=countS[iS]/(float)inumS;
  //       printf("буква %c найдена %d раз в списке из %d букв %d словах\n",alpha[iS], countS[iS], inumS,cnt_wordsS);
@@ -172,7 +181,7 @@ int main()
 /***********************************************************************
  * ***********************Вычисление корреляции*************************
  * ********************************************************************/
-  for (i = 0; i <=strlen_alpha;i++) 
+  for (i = 0; i <=strlen_alpha;i++)
   {
 	  countFS[i]=countdS[i]*countdF[i];
 	  countSS[i]=countdS[i]*countdS[i];
@@ -190,7 +199,8 @@ int main()
 /********************************************************************
 *********Вычисление по формуле Сводеша*******************************
 ********************************************************************/
-swodesh_time=sqrt(0.35*log(correlation)/(-Lcoeff*correlation));
+
+swodesh_time=sqrt((cnt_wordsS/N0)*log(correlation)/(-Lcoeff*correlation));
 printf (" Время Сводеша= %0.9f\n", swodesh_time);
     return 0;
 }
